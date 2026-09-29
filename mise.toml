@@ -1,0 +1,4 @@
+[tools]
+node = "26"
+terraform = "latest"
+wrangler = "latest"
