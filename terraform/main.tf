@@ -34,3 +34,31 @@ resource "cloudflare_workers_custom_domain" "api" {
   hostname   = "warngler-try.markchen.cc"
   service    = cloudflare_workers_script.api.script_name
 }
+
+variable "access_allowed_emails" {
+  type        = list(string)
+  description = "允許通過 Cloudflare Access 的 email 清單"
+  default     = ["mark86092@gmail.com"]
+}
+
+# Zero Trust Access：只有名單內的 email 可透過 One-time PIN 登入
+resource "cloudflare_zero_trust_access_policy" "allow_emails" {
+  account_id = var.account_id
+  name       = "wrangler-try allow emails"
+  decision   = "allow"
+  include = [for email in var.access_allowed_emails : {
+    email = { email = email }
+  }]
+}
+
+resource "cloudflare_zero_trust_access_application" "api" {
+  account_id       = var.account_id
+  name             = "wrangler-try"
+  domain           = cloudflare_workers_custom_domain.api.hostname
+  type             = "self_hosted"
+  session_duration = "24h"
+  policies = [{
+    id         = cloudflare_zero_trust_access_policy.allow_emails.id
+    precedence = 1
+  }]
+}

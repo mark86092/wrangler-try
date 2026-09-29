@@ -20,7 +20,7 @@ CLOUDFLARE_API_TOKEN = "<token>"
 TF_VAR_account_id = "<Cloudflare account ID>"
 ```
 
-- `CLOUDFLARE_API_TOKEN`：需要 Workers Scripts: Edit、Zone: Read，以及 Workers Routes / DNS 的編輯權限。wrangler 與 Terraform provider 都會讀取。
+- `CLOUDFLARE_API_TOKEN`：需要 Workers Scripts: Edit、Zone: Read，以及 Workers Routes / DNS 的編輯權限，另需 Access: Apps and Policies Edit（Zero Trust）。wrangler 與 Terraform provider 都會讀取。
 - `TF_VAR_account_id`：Terraform 的 `account_id` variable。
 
 ## 指令
@@ -32,7 +32,7 @@ TF_VAR_account_id = "<Cloudflare account ID>"
 
 - `src/index.js`：Worker 程式碼
 - `wrangler.toml`：本機開發用的 wrangler 設定
-- `terraform/main.tf`：部署設定（Worker script 與 `markchen.cc` 上的 Custom Domain）。網域 zone 必須已在同一個 Cloudflare account 內。
+- `terraform/main.tf`：部署設定（Worker script 與 `markchen.cc` 上的 Custom Domain）。網域 zone 必須已在同一個 Cloudflare account 內。另含 Zero Trust Access application 與 policy，只允許 `access_allowed_emails`（預設 `mark86092@gmail.com`）透過 One-time PIN 登入。
 
 ## 注意
 
